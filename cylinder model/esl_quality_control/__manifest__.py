@@ -3,7 +3,7 @@
 
 {
     'name': 'Quality Control (Community)',
-    'version': '1.0',
+    'version': '19.0',
     'category': 'Supply Chain/Quality',
     'sequence': 120,
     'summary': 'Control the quality of your products (Community Edition)',
