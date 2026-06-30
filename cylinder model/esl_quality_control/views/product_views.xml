@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem
+        id="quality_control_menu_product"
+        name="Products"
+        parent="esl_quality_control.menu_quality_root"
+        sequence="18"/>
+
+    <menuitem
+        id="quality_product_menu_product_template"
+        name="Products"
+        action="stock.product_template_action_product"
+        parent="quality_control_menu_product"
+        sequence="5"/>
+
+    <menuitem
+        id="quality_control_menu_product_variant"
+        name="Product Variants"
+        action="product.product_normal_action"
+        parent="quality_control_menu_product"
+        groups="product.group_product_variant"
+        sequence="10"/>
+
+    <menuitem 
+        id="quality_control_menu_traceability"
+        name="Lots/Serial Numbers"
+        action="stock.action_production_lot_form"
+        parent="quality_control_menu_product"
+        groups="stock.group_production_lot"
+        sequence="15"/>
+
+    <record id="stock_picking_action_quality_alert" model="ir.actions.server">
+        <field name="name">Quality Alert</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_view_types">form</field>
+        <field name="state">code</field>
+        <field name="code">
+        if record:
+            action = record.button_quality_alert()
+        </field>
+    </record>
+
+    <record id="stock_picking_action_quality_check_on_demand" model="ir.actions.server">
+        <field name="name">Quality Check</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_view_types">form</field>
+        <field name="state">code</field>
+        <field name="code">action = record.action_open_on_demand_quality_check()</field>
+    </record>
+
+    <!-- view used for product.template only -->
+    <record id="product_template_form_view_quality_control" model="ir.ui.view">
+        <field name="name">product.template.quality</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="stock.product_template_form_view_procurement_button"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_view_related_putaway_rules']" position="after">
+                <button name="action_see_quality_control_points" type="object" class="oe_stat_button" icon="fa-list" invisible="type != 'consu'" groups="esl_quality_control.group_quality_user">
+                    <field string="Quality Points" name="quality_control_point_qty" widget="statinfo"/>
+                </button>
+                <button name="action_see_quality_checks" type="object" class="oe_stat_button" icon="fa-check" invisible="(type != 'consu' or quality_pass_qty == 0) and quality_fail_qty == 0" groups="esl_quality_control.group_quality_user">
+                    <div class="o_field_widget o_stat_info mr4">
+                        <span class="o_stat_text">Pass:</span>
+                        <span class="o_stat_text">Fail:</span>
+                    </div>
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value"><field name="quality_pass_qty"/></span>
+                        <span class="o_stat_value"><field name="quality_fail_qty"/></span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- view used for product.product only -->
+    <record id="product_product_form_view_quality_control" model="ir.ui.view">
+        <field name="name">product.product.quality</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="stock.product_form_view_procurement_button"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_view_related_putaway_rules']" position="after">
+                <button name="action_see_quality_control_points" type="object" icon="fa-list" class="oe_stat_button" invisible="type != 'consu'" groups="esl_quality_control.group_quality_user">
+                    <field string="Quality Points" name="quality_control_point_qty" widget="statinfo"/>
+                </button>
+                <button name="action_see_quality_checks" type="object" class="oe_stat_button" icon="fa-check" groups="esl_quality_control.group_quality_user" invisible="quality_pass_qty == 0 and quality_fail_qty == 0" >
+                    <div class="o_field_widget o_stat_info mr4">
+                        <span class="o_stat_text">Pass:</span>
+                        <span class="o_stat_text">Fail:</span>
+                    </div>
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value"><field name="quality_pass_qty"/></span>
+                        <span class="o_stat_value"><field name="quality_fail_qty"/></span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

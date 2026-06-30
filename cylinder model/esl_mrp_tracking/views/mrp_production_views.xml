@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit MO Form View -->
+    <record id="mrp_production_form_view_inherit_customer" model="ir.ui.view">
+        <field name="name">mrp.production.form.inherit.customer</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <!-- Add Customer and Cylinder fields after the Bill of Material row wrapper -->
+            <xpath expr="//div[@name='bom_div']" position="after">
+                <field name="partner_id" widget="res_partner_many2one" context="{'res_partner_search_mode': 'customer'}" readonly="state in ('done', 'cancel')"/>
+                <field name="cylinder_id" readonly="state in ('done', 'cancel')"/>
+            </xpath>
+            <!-- Update bom_id domain to filter by partner_id (Customer) -->
+            <xpath expr="//field[@name='bom_id']" position="attributes">
+                <attribute name="domain">[
+                    ('company_id', 'in', [company_id, False]),
+                    '|',
+                        ('product_id', '=', product_id),
+                        '&amp;',
+                            ('product_tmpl_id.product_variant_ids', '=', product_id),
+                            ('product_id', '=', False),
+                    ('type', '=', 'normal'),
+                    ('partner_id', 'in', [partner_id, False])
+                ]</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inherit MO List View -->
+    <record id="mrp_production_tree_view_inherit_customer" model="ir.ui.view">
+        <field name="name">mrp.production.list.inherit.customer</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='bom_id']" position="after">
+                <field name="partner_id" optional="show"/>
+                <field name="cylinder_id" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inherit MO Search View -->
+    <record id="view_mrp_production_filter_inherit_customer" model="ir.ui.view">
+        <field name="name">mrp.production.select.inherit.customer</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.view_mrp_production_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="partner_id" string="Customer"/>
+                <field name="cylinder_id" string="Cylinder"/>
+                <filter string="Customer" name="group_by_customer" domain="[]" context="{'group_by': 'partner_id'}"/>
+                <filter string="Cylinder" name="group_by_cylinder" domain="[]" context="{'group_by': 'cylinder_id'}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+
