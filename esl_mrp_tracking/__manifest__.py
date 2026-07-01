@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'ESL MRP Tracking',
-    'version': '19.0',
+    'version': '19.0.0.1',
     'summary': 'Track Customers in Bills of Material (BOM) and Manufacturing Orders (MO)',
     'description': """
         This module adds a Customer field on Bill of Materials and Manufacturing Orders,
